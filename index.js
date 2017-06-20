@@ -22,6 +22,9 @@ RNSync.init = function(config) {
 
   sync.setCloudHandler(function (params, success, failure) {
     var body = params.req;
+    body.__fh = {
+      cuid: getClientId()
+    };
     fetch(url + params.dataset_id, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -43,6 +46,30 @@ RNSync.init = function(config) {
     "do_console_log": true
   });
 }
+
+
+// Get unique phone id.
+// Based on: https://github.com/feedhenry/fh-sync-js/blob/master/src/clientIdProvider.js
+
+// More efficient implementation possible: 
+// For react native we should use: https://github.com/rebeccahughes/react-native-device-info
+// See also: http://www.reactnative.com/ios-and-android-device-information-for-react-native/
+// var DeviceInfo = require('react-native-device-info');
+// DeviceInfo.getUniqueID()
+function getClientId() {
+    if (window && window.localStorage) {
+        var clientId = window.localStorage.getItem(CLIENT_ID_TAG);
+        if (!clientId) {
+            // Replace with UUID 
+            clientId = new date().gettime();
+            localStorage.setItem(CLIENT_ID_TAG, clientId);
+        }
+        return clientId;
+    } else {
+        throw Error("Cannot create and store client id");
+    }
+}
+
 
 RNSync.doCreate = sync.doCreate;
 RNSync.doList = sync.doList;
