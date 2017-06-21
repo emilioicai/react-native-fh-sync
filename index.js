@@ -19,9 +19,11 @@ RNSync.init = function(config) {
   });
 
   sync.setHashMethod(sha1);
-
   sync.setCloudHandler(function (params, success, failure) {
     var body = params.req;
+    body.__fh = {
+      cuid: getClientId()
+    };
     fetch(url + params.dataset_id, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -37,11 +39,25 @@ RNSync.init = function(config) {
       failure(error);
     });
   });
-
   sync.init({
     "sync_frequency": 10,
     "do_console_log": true
   });
+}
+
+var uuidGenerator = require('uuid').v1;
+// Get unique client id (store it for future usages)
+function getClientId() {
+    if (window && window.localStorage) {
+        var clientId = window.localStorage.getItem(CLIENT_ID_TAG);
+        if (!clientId) {
+            clientId = uuidGenerator();
+            localStorage.setItem(CLIENT_ID_TAG, clientId);
+        }
+        return clientId;
+    } else {
+        throw Error("Cannot create and store client id");
+    }
 }
 
 RNSync.doCreate = sync.doCreate;
