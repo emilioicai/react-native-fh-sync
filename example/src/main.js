@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Content, List, ListItem, Text, Fab } from 'native-base';
+import { Button, View, Text, TextInput } from 'react-native';
 import RNSync from 'react-native-fh-sync';
 import prompt from 'react-native-prompt-android';
 
@@ -7,7 +7,8 @@ export default class syncExample extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: {}
+      messages: {},
+      curMessage: ''
     }
     this.messagesId = 'messages';
   }
@@ -74,28 +75,20 @@ export default class syncExample extends Component {
     }
 
     return (
-      <Container style={{marginTop: 20}}>
-          <Content>
-              <List>
-                {
-                  messages.map((m, i)=>{
-                    return (
-                      <ListItem key={i}>
-                        <Text>{m}</Text>
-                      </ListItem>
-                    )
-                  })
-                }
-              </List>
-          </Content>
-          <Fab
-            style={{ backgroundColor: '#5067FF' }}
-            position="bottomRight"
-            onPress={this._handleAddMessagePress.bind(this)}
-          >
-            <Text>+</Text>
-          </Fab>
-      </Container>
+      <View style={{marginTop: 20}}>   
+        <Button
+          onPress={this._handleAddMessagePress.bind(this)}
+          title="Add Message"
+          color="#841584"
+        />
+        {
+          messages.map((m, i)=>{
+            return (
+                <Text key={i}>{m}</Text>
+            )
+          })
+        }
+      </View>
     );
   }
 }

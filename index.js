@@ -48,16 +48,17 @@ RNSync.init = function(config) {
 var uuidGenerator = require('uuid').v1;
 // Get unique client id (store it for future usages)
 function getClientId() {
+    var clientId;
     if (window && window.localStorage) {
-        var clientId = window.localStorage.getItem(CLIENT_ID_TAG);
+        clientId = window.localStorage.getItem(CLIENT_ID_TAG);
         if (!clientId) {
             clientId = uuidGenerator();
             localStorage.setItem(CLIENT_ID_TAG, clientId);
         }
-        return clientId;
     } else {
-        throw Error("Cannot create and store client id");
+        clientId = uuidGenerator();
     }
+    return clientId;
 }
 
 RNSync.doCreate = sync.doCreate;
