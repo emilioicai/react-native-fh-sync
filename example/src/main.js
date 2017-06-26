@@ -36,18 +36,29 @@ export default class syncExample extends Component {
           function (err) {
             console.log('Error result from list:', JSON.stringify(err));
           });
-      } else {
-        //choose other notifications the app is interested in and provide callbacks
+      } else if( 'remote_update_failed' === notification.code ){
+        var errorMsg = notification.message ? notification.message.msg ? notification.message.msg : undefined : undefined;
+        var action = notification.message ? notification.message.action ? notification.message.action : 'action' : 'action';
+        var errorStr = 'The following error was returned from the data store: ' + errorMsg;
+
+        console.error('Unable to perform ' + action +  ' on record ' + notification.uid + '. ' + errorStr);
       }
     });
 
     const queryParams = {};
     const metaData = {};
-    RNSync.manage(this.messagesId, {}, queryParams, metaData, () => {});
+    RNSync.manage(this.messagesId, {}, queryParams, metaData, () => {
+      console.log('-----------', 'DATA SET MANAGED' ,'-----------')
+    });
   }
   
   _addNewMessage(text){
-    RNSync.doCreate(this.messagesId, text, (res) => {
+    var created = new Date().getTime();
+    var dataItem = {
+      "text" : text,
+      "created" : created
+    }
+    RNSync.doCreate(this.messagesId, dataItem, (res) => {
       console.log('Create item success');
     }, function(code, msg) {
       alert('An error occured while creating data : (' + code + ') ' + msg);
@@ -84,7 +95,7 @@ export default class syncExample extends Component {
         {
           messages.map((m, i)=>{
             return (
-                <Text key={i}>{m}</Text>
+                <Text key={i}>{m.text}</Text>
             )
           })
         }
